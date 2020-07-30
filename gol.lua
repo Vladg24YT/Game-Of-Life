@@ -5,8 +5,10 @@ local keyboard = require("keyboard")
 local width, height = gpu.maxResolution()
 
 local black = 0x000000
-local grey = 0x7F7F7F
 local white = 0xFFFFFF
+
+local red = 0xC80000
+local green = 0x00C800
 
 local isSimLaunched = false
 
@@ -24,7 +26,7 @@ local pfield = {}
 [ - previous generation \ - start/stop simulation ` - exit
 ] - next generation     / - restart               Use LMB to change cell's state
 ]]
-gpu.setBackground(grey)
+gpu.setBackground(0x0000C8)
 gpu.setForeground(black)
 gpu.fill(1, height-2, width, 1, " ")
 gpu.setBackground(white)
@@ -38,31 +40,39 @@ gpu.set(61, height, "Use LMB to change cell's state")
 
 -- Field generation (MUST UNDERSTAND HOW TO MAKE AN INFINITE GAME FIELD)
 local function clearField()
+  gpu.setBackground(0x0000C8)
+  gpu.fill(1, height-2, width, 1, " ")
   for gx=1,width do
     if gx==width then
-      field[1] = field[width+1]
+      field[width+1] = field[1]
     end
     field[gx] = {}
     for gy=1,height-3 do
       if gy==height-3 then
-        field[gx][1] = field[gx][height-2]
+        field[gx][height-2] = field[gx][1]
       end
-      field[gx][gy] = 0--[[false]]
-      --[[gpu.set(1, gy, "x: "..gx)
-      gpu.set(1, gy, "y: "..gy)]]
-      gpu.set(1, gy, "field["..gx.."]["..gy.."]: "..field[gx][gy])
+      field[gx][gy] = false
+      -- PROGRESS
+      if gx*gy==width*(height-3) then
+        gpu.setBackground(green)
+      else
+        gpu.setBackground(red)
+      end
+      gpu.setForeground(white)
+      gpu.set(2, height-2, "CURRENT PROCESS: FIELD CLEARING")
+      gpu.set(60, height-2, "PROGRESS: "..gx*gy.."/"..width*(height-3))
+      gpu.set(100, height-2, "RAM: "..require("computer").freeMemory().."/"..require("computer").totalMemory())
     end
   end
 end
 
 --Field redraw
 local function drawField()
-  for x=1, #field do
-    for y=1,x do
-      gpu.set(50, 23, "x: "..x)
-      gpu.set(50, 24, "y: "..y)
-      gpu.set(50, 25, "field["..x.."]["..y.."]: "..field[x][y])
-      if field[x][y]==1 then
+  gpu.setBackground(0x0000C8)
+  gpu.fill(1, height-2, width, 1, " ")
+  for x=1, width do
+    for y=1,height-3 do
+      if field[x][y] then
         gpu.setBackground(white)
         gpu.setForeground(black)
       else
@@ -70,6 +80,16 @@ local function drawField()
         gpu.setForeground(white)
       end
       gpu.fill(x, y, 1, 1, " ")
+      -- PROGRESS
+      if x*y==width*(height-3) then
+        gpu.setBackground(green)
+      else
+        gpu.setBackground(red)
+      end
+      gpu.setForeground(white)
+      gpu.set(2, height-2, "CURRENT PROCESS: FIELD REDRAWING")
+      gpu.set(60, height-2, "PROGRESS: "..x*y.."/"..width*(height-3))
+      gpu.set(100, height-2, "RAM: "..require("computer").freeMemory().."/"..require("computer").totalMemory())
     end
   end
 end
@@ -92,38 +112,62 @@ end
 
 -- Game loop
 clearField()
---while true do
+while true do
   local lastEvent = {event.pullFiltered(filter)}
   if lastEvent[1] == "touch" and lastEvent[5] == 0 then
-    gpu.set(1, 1, "touch at "..lastEvent[3]..":"..lastEvent[4].." with "..lastEvent[5])
-    print(field[lastEvent[3]][lastEvent[4]])
+    --gpu.set(1, 1, "touch at "..lastEvent[3]..":"..lastEvent[4].." with "..lastEvent[5])
+
     --State invertion
-    --field[lastEvent[3]][lastEvent[4]] = not field[lastEvent[3]][lastEvent[4]]
-    if field[lastEvent[3]][lastEvent[4]]==1 then
-      field[lastEvent[3]][lastEvent[4]] = 0
-    else
-      field[lastEvent[3]][lastEvent[4]] = 1
-    end
+    field[lastEvent[3]][lastEvent[4]] = not field[lastEvent[3]][lastEvent[4]]
     drawField()
   elseif lastEvent[1] == "key_down" then
-    gpu.set(1, 2, "char "..lastEvent[3]..", code "..lastEvent[4])
+    --gpu.set(1, 2, "char "..lastEvent[3]..", code "..lastEvent[4])
     if lastEvent[4] == keyboard.keys.lbracket then
       field = pfield
       drawField()
     elseif lastEvent[4] == keyboard.keys.rbracket then
-      local c1, c2, c3, c4, c5, c6, c7, c8
-      local tx, ty
-      --[[
-      c1, c2, c3
-      c4, xy, c5,
-      c6, c7, c8
-      ]]
+      gpu.setBackground(0x0000C8)
+      gpu.fill(1, height-2, width, 1, " ")
       for x=1,width do
-        tx=x
         for y=1,height-3 do
-          ty=y
-          --
-
+          --Calculation of living cells around x:y
+          local livingCells = 0
+          for cx=x-1,x+1 do
+            local prevX = cx
+            for cy=y-1,y+1 do
+              local prevY = cy
+              --
+              if cx==0 then
+                cx=width
+              end
+              if cy==0 then
+                cy=height-3
+              end
+              if field[cx][cy]==true and (cx~=x and cy~=y) then
+                livingCells = livingCells + 1
+              end
+              -- PROGRESS
+              if cx*cy==width*(height-3) then
+                gpu.setBackground(green)
+              else
+                gpu.setBackground(red)
+              end
+              gpu.setForeground(white)
+              gpu.set(2, height-2, "CURRENT PROCESS: CALCULATING NEIGHBOURS FOR "..x..":"..y)
+              gpu.set(60, height-2, "PROGRESS: "..cx*cy.."/"..(x+1)*(y+1))
+              gpu.set(100, height-2, "RAM: "..require("computer").freeMemory().."/"..require("computer").totalMemory())
+              --
+              cy = prevY
+            end
+            cx = prevX
+          end
+          --spawns
+          if field[x][y]==false and livivngCells==3 then
+            field[x][y] = true
+          --dies
+          elseif field[x][y]==true and (livingCells < 2 or livingCells > 3) then
+            field[x][y] = false
+          end
         end
       end
       pfield = field
@@ -142,8 +186,7 @@ clearField()
       clearField()
       isSimLaunched = false
     elseif lastEvent[4] == keyboard.keys.grave then
-      --break
       return nil
     end
   end
---end
+end
