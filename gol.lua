@@ -4,9 +4,7 @@ local event = require("event")
 local gpu = component.gpu
 local keyboard = require("keyboard")
 
-local width = 100
-local height = 50
-gpu.setResolution(width, height)
+local width, height = gpu.maxResolution()
 
 local black = 0x000000
 local white = 0xFFFFFF
@@ -36,12 +34,8 @@ gpu.setForeground(black)
 gpu.fill(1, height-2, width, 1, " ")
 gpu.setBackground(white)
 gpu.fill(1, height-1, width, 2, " ")
-gpu.set(1, height-1, "[ - previous generation")
-gpu.set(1, height, "] - next generation")
-gpu.set(31, height-1, "\\ - start/stop simulation")
-gpu.set(31, height, "/ - restart")
-gpu.set(61, height-1, "` - exit")
-gpu.set(61, height, "Use LMB to change cell's state")
+gpu.set(1, height-1, "[ - previous generation | \\ - start/stop simulation | ` - exit")
+gpu.set(1, height,   "] - next generation     | / - restart               | LMB - invert cell's state")
 
 -- Field clearing/generation
 local function clearField()
@@ -125,7 +119,7 @@ local function nextGen()
             gpu.setBackground(red)
           end
           gpu.setForeground(white)
-          gpu.set(2, height-2, "CURRENT PROCESS: CHECKING NEIGHBOUR "..i..":"..j.." AT "..x..":"..y..", PROGRESS: "..i*j.."/"..width*(height-3)..", livingCells="..livingCells..","..field[x][y])
+          gpu.set(2, height-2, "CURRENT PROCESS: CHECKING NEIGHBOUR "..i..":"..j.." AT "..x..":"..y..", PROGRESS: "..i*j.."/"..width*(height-3))
         end
       end
       -- In case it's alive
@@ -141,6 +135,7 @@ local function nextGen()
       end
     end
   end
+  return true
   computer.beep()
 end
 
@@ -184,9 +179,11 @@ while true do
     elseif lastEvent[4] == keyboard.keys.backslash then
       isSimLaunched = not isSimLaunched
       while true do
-        os.sleep(10)
+        os.sleep(2)
         if isSimLaunched then
-          nextGen()
+          if not nextGen() then
+            break
+          end
           drawField(nfield)
           for i=1,width do
             for j=1,height-3 do
