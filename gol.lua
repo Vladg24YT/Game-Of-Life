@@ -158,8 +158,8 @@ local function nextGen()
       end
     end
   end
-  return true
   computer.beep()
+  return true
 end
 
 -- Touch & Keyboard
