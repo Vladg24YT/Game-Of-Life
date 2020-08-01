@@ -34,12 +34,11 @@
 - Серверный дисковод с дискетой OpenOS
 
 ## Установка
-**Online (*с интернет-платой*):**
+**С интернет-платой:**
 1. `wget https://raw.githubusercontent.com/Vladg24YT/Game-Of-Life/master/gol.lua /home/gol.lua -fq`
 
-**Offline:**
-1. Скачайте/клонируйте эту репозиторию (в Git - `git clone -b master --progress https://github.com/Vladg24YT/Game-Of-Life.git`)
-2. Скопируйте файл `gol.lua` в `.minecraft/saves/<название-мира>/opencomputers/<uuid-файловой-системы>/` внутрь папки `/bin` или `/home`
+**Без интернет-платы:**
+1. Скачайте файл `gol.lua` из вкладки *Releases* в `.minecraft/saves/<название-мира>/opencomputers/<uuid-файловой-системы>/` внутрь папки `/bin` или `/home`
 
 ## UI и Как играть
 ![Game UI](/screenshots/ui.png)
