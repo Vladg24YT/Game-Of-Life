@@ -1,25 +1,58 @@
 # Game-Of-Life
 ![](https://img.shields.io/github/repo-size/Vladg24YT/Game-Of-Life?style=plastic)
 
-An OpenComputers 1.7.5 recreation of `Conway's Game of Life`.
+A Lua implementation of Conway's Game of Life for OpenComputers 1.7.5. 
+
+*For 'Known issues' section, see Releases*
+
+![Gosper Glider gun](/screenshots/gosper_glider_gun.png)
 
 ## Requirements
-**Minimum:**
+**Minimum:**<br>
+![](/screenshots/minimum_configuration.png)
 - Screen Tier 2
-- Graphics Card Tier 2
-- CPU Tier 2
-- Two RAMs Tier 3.5
-- At least one HDD with OpenOS installed and 5.57 Kilobytes of free memory
+- Computer Case Tier 2:
+  - Graphics Card Tier 2
+  - CPU Tier 1
+  - 2 RAM Tier 1
+  - HDD Tier 1
+  - EEPROM (Lua BIOS)
+- Disk Drive
+  - OpenOS Floppy
+  
+**Recommended:**<br>
+![](/screenshots/recommended_configuration.png)
+- Screen Tier 2
+- Server Rack
+- Server Tier 3:
+  - Graphics Card Tier 3
+  - CPU Tier 3
+  - 4 RAM Tier 3.5
+  - HDD Tier 3
+  - EEPROM (Lua BIOS)
+  - Internet Card
+- Server disk drive with OpenOS Floppy
 
-## UI
+## Installation
+**Online (*with internet card*):**
+1. `wget https://raw.githubusercontent.com/Vladg24YT/Game-Of-Life/master/gol.lua /home/gol.lua -fq`
 
-Controls:
+**Offline:**
+1. Download/clone the repository (`git clone -b master --progress https://github.com/Vladg24YT/Game-Of-Life.git`)
+2. Copy file `gol.lua` to `.minecraft/saves/<world-name>/opencomputers/<filesystem-uuid>/` into `/bin` or `/home` directory
+
+## UI & How to Play
+![Game UI](/screenshots/ui.png)
+**Controls:**
 - **]** - proceed to next generation
 - **\[** - return to previous generation
-- **\\** - start self-running simulation
+- **\\** - start self-proceeding simulation
 - **/** - clear field and restart
 - **\`** - exit the game
-- *LMB* - click the cell to invert it's state
+- *LMB* - invert cell's state
+
+The game is not yet optimized, so I recommend you to change cells' states when the bottom line is green like on a screenshot above. If the bottom line is red (screenshot below), all your actions will be put into event queue, so you won't be able to immediately see which cell you're changing.<br>
+![](/screenshots/ui_red.png)
 
 ## Licensing
 
