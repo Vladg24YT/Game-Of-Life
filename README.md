@@ -1,5 +1,5 @@
 # Game-Of-Life
-![](https://img.shields.io/github/repo-size/Vladg24YT/Game-Of-Life?style=plastic)
+![](https://img.shields.io/badge/openComputers-stable-brightgreen?style=plastic)
 
 A Lua implementation of Conway's Game of Life for OpenComputers 1.7.5. 
 
