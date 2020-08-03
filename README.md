@@ -42,7 +42,7 @@ A Lua implementation of Conway's Game of Life for OpenComputers 1.7.5.
 2. Copy file `gol.lua` to `.minecraft/saves/<world-name>/opencomputers/<filesystem-uuid>/` into `/bin` or `/home` directory
 
 ## UI & How to Play
-![Game UI](/screenshots/ui.png)
+![Game UI](/screenshots/ui.png)<br>
 **Controls:**
 - **]** - proceed to next generation
 - **\[** - return to previous generation
