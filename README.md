@@ -34,10 +34,10 @@ A Lua implementation of Conway's Game of Life for OpenComputers 1.7.5.
 - Server disk drive with OpenOS Floppy
 
 ## Installation
-**Online (*with internet card*):**
+**1st Method:**
 1. `wget https://raw.githubusercontent.com/Vladg24YT/Game-Of-Life/master/gol.lua /home/gol.lua -fq`
 
-**Offline:**
+**2nd Method:**
 1. Download/clone the repository (`git clone -b master --progress https://github.com/Vladg24YT/Game-Of-Life.git`)
 2. Copy file `gol.lua` to `.minecraft/saves/<world-name>/opencomputers/<filesystem-uuid>/` into `/bin` or `/home` directory
 
